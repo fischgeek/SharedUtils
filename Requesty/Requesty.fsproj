@@ -5,8 +5,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Requesty.fs" />
+    <Compile Include="RequestyApplied.fs" />
     <None Include="paket.references" />
-    <Compile Include="Library.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharedUtils\SharedUtils.fsproj" />
