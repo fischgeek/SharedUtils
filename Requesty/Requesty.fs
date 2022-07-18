@@ -55,21 +55,21 @@ module Requesty =
         member val Method: string = "get"                                               with get, set
         member val AuthInfo: AuthInfo = AuthInfo.Anon                                   with get, set
         member val EvaluteResponse: (HttpResponse -> Result<'a, string>) option = None with get, set
-        static member Empty() = { ExpectsBody = false; Method="get"; Url = ""; Query = []; Headers = []; Body = ""; AuthInfo = Anon; EvaluteResponse = None }
+        //static member Empty() = { ExpectsBody = false; Method="get"; Url = ""; Query = []; Headers = []; Body = ""; AuthInfo = Anon; EvaluteResponse = None }
 
     type HRB =
         static member Create() : HttpRequestBuilderClass<'a> = new HttpRequestBuilderClass<'a>()
         static member Url (x: string) (b: HttpRequestBuilderClass<_>): HttpRequestBuilderClass<'a> = b.Url <- x; b
         static member EvaluteResponse x (b: HttpRequestBuilderClass<_>) = b.EvaluteResponse <- Some x; b
         static member Query x (b: HttpRequestBuilderClass<_>) = b.Query <- x
-        static member Headers x b = {b with HttpRequestBuilder.Headers = x}
-        static member Body x b = {b with HttpRequestBuilder.Body = x}
-        static member ExpectsBody x b = {b with HttpRequestBuilder.ExpectsBody = x}
-        static member Method x b = {b with HttpRequestBuilder.Method = x}
-        static member Auth x b = {b with HttpRequestBuilder.AuthInfo = x }
-        //static member EvaluteResponse x b = {b with HttpRequestBuilder.EvaluteResponse = Some x }
-        static member BasicAuth name password b = {b with HttpRequestBuilder.AuthInfo = BasicAuth(name, password)}
-        static member SetMethodPost b = {b with Method = "post"}
+        
+        static member Headers x (b: HttpRequestBuilderClass<_>) = b.Headers <- x
+        static member Body x (b: HttpRequestBuilderClass<_>) = b.Body <- x
+        static member ExpectsBody x  (b: HttpRequestBuilderClass<_>) = b.ExpectsBody <- false
+        static member Method x (b: HttpRequestBuilderClass<_>) = b.Method <- "get"
+        static member Auth x (b: HttpRequestBuilderClass<_>) = b.AuthInfo <- AuthInfo.Anon
+        static member BasicAuth username password (b: HttpRequestBuilderClass<_>) = b.AuthInfo <- BasicAuth(username, password)
+        static member SetMethodPost (b: HttpRequestBuilderClass<_>) = b.Method <- "post"
         static member Run(x: HttpRequestBuilderClass<'a>) : Result<'a, string> = 
             Http.Request (url = x.Url, query = x.Query, headers = x.Headers, httpMethod = x.Method) 
             |> fun resp ->

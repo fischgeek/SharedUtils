@@ -29,7 +29,7 @@ module RequestyApplied =
             | GotBinary x -> ()
             | Failed x -> ()
         | Error str -> ()
-
+            
         let myCreate = HRB.Create<MyResultCode>
 
         myCreate()
