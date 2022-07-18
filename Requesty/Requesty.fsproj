@@ -12,4 +12,8 @@
 
   <ItemGroup />
 
+  <ItemGroup>
+    <ProjectReference Include="..\SharedUtils\SharedUtils.fsproj" />
+  </ItemGroup>
+
 </Project>
