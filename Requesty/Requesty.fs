@@ -31,20 +31,20 @@ module Requesty =
         | Bearer of BearerInfo
         | Anon
     
-    type HttpRequestBuilder = 
-        {
-            Url: string
-            Query: (string * string) list
-            Headers: (string * string) list
-            Body: string
-            ExpectsBody: bool
-            Method: string
-            //BAUsername: string
-            //BAPassword: string
-            AuthInfo: AuthInfo
-            EvaluteResponse: (HttpResponse -> Result<obj, string>) option
-        }
-        static member Empty() = { ExpectsBody = false; Method="get"; Url = ""; Query = []; Headers = []; Body = ""; AuthInfo = Anon; EvaluteResponse = None }
+    //type HttpRequestBuilder = 
+    //    {
+    //        Url: string
+    //        Query: (string * string) list
+    //        Headers: (string * string) list
+    //        Body: string
+    //        ExpectsBody: bool
+    //        Method: string
+    //        //BAUsername: string
+    //        //BAPassword: string
+    //        AuthInfo: AuthInfo
+    //        EvaluteResponse: (HttpResponse -> Result<obj, string>) option
+    //    }
+    //    static member Empty() = { ExpectsBody = false; Method="get"; Url = ""; Query = []; Headers = []; Body = ""; AuthInfo = Anon; EvaluteResponse = None }
 
     type HttpRequestBuilderClass<'a>() = 
         member val Url = ""                                                             with get, set
@@ -59,12 +59,8 @@ module Requesty =
 
     type HRB =
         static member Create() : HttpRequestBuilderClass<'a> = new HttpRequestBuilderClass<'a>()
-        static member Url (x: string) (b: HttpRequestBuilderClass<_>): HttpRequestBuilderClass<'a> = 
-            b.Url <- x
-            b
-        static member EvaluteResponse x (b: HttpRequestBuilderClass<_>) = 
-            b.EvaluteResponse <- Some x
-            b
+        static member Url (x: string) (b: HttpRequestBuilderClass<_>): HttpRequestBuilderClass<'a> = b.Url <- x; b
+        static member EvaluteResponse x (b: HttpRequestBuilderClass<_>) = b.EvaluteResponse <- Some x; b
         static member Query x (b: HttpRequestBuilderClass<_>) = b.Query <- x
         static member Headers x b = {b with HttpRequestBuilder.Headers = x}
         static member Body x b = {b with HttpRequestBuilder.Body = x}

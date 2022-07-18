@@ -36,7 +36,6 @@ module RequestyApplied =
         |> HRB.Run
         |> (fun x -> x)
 
-
     //let MakeCall verb url fn msg =
     //    HRB.Url url
     //    |> HRB.Body ""
