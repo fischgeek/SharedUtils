@@ -63,7 +63,7 @@ module Requesty =
             AuthInfo: AuthInfo
             //EvaluteResponse: (HttpResponse -> Result<obj, string>) option
         }
-        static member Empty() = { ExpectsBody = false; Method="get"; Url = ""; Query = []; Headers = []; Body = ""; AuthInfo = Anon; EvaluteResponse = None }
+        static member Empty() = { ExpectsBody = false; Method="get"; Url = ""; Query = []; Headers = []; Body = ""; AuthInfo = Anon }
     let BasicResponse = 
         (fun (x: HttpResponse) -> 
             match x.StatusCode, x.Body with
@@ -73,29 +73,23 @@ module Requesty =
         )
 
     type HRB2 =
-        //static member Create() : HttpRequestBuilderClass<'a> = new HttpRequestBuilderClass<'a>()
-        //static member Url (x: string) (b: HttpRequestBuilderClass<_>): HttpRequestBuilderClass<'a> = 
-        //    b.Url <- x
-        //    b
-        //static member EvaluteResponse x (b: HttpRequestBuilderClass<_>) = 
-        //    b.EvaluteResponse <- Some x
-        //    b
-        //static member Query x (b: HttpRequestBuilderClass<_>) = b.Query <- x
-        static member Url x = {HttpRequestBuilder.Empty() with HttpRequestBuilder.Url = x}
+        static member Create () = HttpRequestBuilder.Empty()
+        static member Url x b = {b with HttpRequestBuilder.Url = x}
+        static member Query x b = {b with HttpRequestBuilder.Query = x}
         static member Headers x b = {b with HttpRequestBuilder.Headers = x}
         static member Body x b = {b with HttpRequestBuilder.Body = x}
         static member ExpectsBody x b = {b with HttpRequestBuilder.ExpectsBody = x}
         static member Method x b = {b with HttpRequestBuilder.Method = x}
         static member Auth x b = {b with HttpRequestBuilder.AuthInfo = x }
-        //static member EvaluteResponse x b = {b with HttpRequestBuilder.EvaluteResponse = Some x }
         static member BasicAuth name password b = {b with HttpRequestBuilder.AuthInfo = BasicAuth(name, password)}
         static member SetMethodPost b = {b with Method = "post"}
         static member Run (eval: (HttpResponse -> Result<'a, 'err>)) (x: HttpRequestBuilder) : Result<'a, 'err> = 
             Http.Request (url = x.Url, query = x.Query, headers = x.Headers, httpMethod = x.Method) 
             |> eval 
         static member RunWithBasicResponse (x: HttpRequestBuilder) : Result<MyResultCode, string> = HRB2.Run BasicResponse x
-   
-    HRB2.Url ""
+    
+    HRB2.Create()
+    |> HRB2.Url ""
     |> fun x -> x
     |> fun x -> 
         x |> (HRB2.RunWithBasicResponse >> function Ok x -> () | Error x -> ())
