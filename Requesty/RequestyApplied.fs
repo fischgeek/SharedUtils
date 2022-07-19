@@ -5,20 +5,14 @@ open FSharp.Data
 open FSharp.Data.HttpRequestHeaders
 
 module RequestyApplied = 
-    let eval = 
-        (fun (x: HttpResponse) -> 
-            match x.StatusCode, x.Body with
-            | 200, Text x -> GotData x |> unbox |> Ok
-            | 200, Binary x -> Error $"Binary code"
-            | _ -> Error $"Bad code {x}"
-        )
+    
     //let resp  = eval {HttpResponse.Body = Text ""; HttpResponse.StatusCode = 200; HttpResponse.Headers = Map.empty; HttpResponse.Cookies = Map.empty; ResponseUrl = ""}
     //let resp : Result<MyResultCode, string> = eval {HttpResponse.Body = Text ""; HttpResponse.StatusCode = 200; HttpResponse.Headers = Map.empty; HttpResponse.Cookies = Map.empty; ResponseUrl = ""}
     let newCall = 
         HRB.Create<MyResultCode>()
         |> (fun x -> x)
         |> HRB.Url @"www."
-        |> HRB.EvaluteResponse eval
+        |> HRB.EvaluteResponse BasicResponse
         |> HRB.Run
         |> fun x -> x
         |> function
