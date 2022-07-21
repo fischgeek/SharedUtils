@@ -230,11 +230,12 @@ module Atomic =
     let lower x = (x |> ns).ToLower()
     let upper x = (x |> ns).ToUpper()
     let Trim (x: string) = x |> ns |> fun x -> x.Trim()
+    let ToList x = Seq.toList x
     [<DebuggerHidden>]
     let RegexReplace (pattern: string) (replacement: string) (input: string) : string =
-        let input = input |> Extensions.u_ns
-        let pattern = pattern |> Extensions.u_ns
-        let replacement = replacement |> Extensions.u_ns
+        let input = input |> ns
+        let pattern = pattern |> ns
+        let replacement = replacement |> ns
         Regex.Replace(input, pattern, replacement, (RegexOptions.IgnoreCase ||| RegexOptions.Singleline))
     [<DebuggerHidden>]
     let RegexStrip (pattern: string) (input: string) = input |> RegexReplace pattern ""
@@ -277,7 +278,7 @@ module Atomic =
         |> Seq.map (fun oo -> oo.Value)
         |> Seq.toList
 
-    let TrimStart(startText: string) : string -> string = RegexStrip("^" + Regex.Escape(startText |> Extensions.u_ns))
+    let TrimStart(startText: string) : string -> string = RegexStrip("^" + Regex.Escape(startText |> ns))
 
     type RegexBuilderElement =
         | Input of string
@@ -396,6 +397,7 @@ module Atomic =
             rb
             |> RX.Matches
             |+ fun x ->
+                
                 names
                 |+ fun q -> q, x.Groups.[q].Value
                 |> dict
@@ -454,7 +456,7 @@ module Atomic =
         static member Escape = Regex.Escape
         static member Unescape = Regex.Unescape
     [<DebuggerHidden>]
-    let Lines (text: string) = System.Text.RegularExpressions.Regex.Split(text |> Extensions.u_ns, @"\r\n|\n\r|\n|\r")
+    let Lines (text: string) = System.Text.RegularExpressions.Regex.Split(text |> ns, @"\r\n|\n\r|\n|\r")
 
     type ShouldIncludeStackTrace =
         | IncludeStackTrace

@@ -1,10 +1,8 @@
 namespace SharedFSharpVanilla
 open System.IO
-//open SharedFSharpVanilla.CoreUtils
 open System
 open System.Diagnostics
 open System.Text.RegularExpressions
-//open ExceptionalCode
 
 [<AutoOpen>]
 module ExperimentalOperators =

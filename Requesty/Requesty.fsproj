@@ -5,15 +5,15 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Ref\Operators.fs" />
-    <Compile Include="Ref\Atomic.fs" />
-    <Compile Include="Types.fs" />
     <Compile Include="Requesty.fs" />
     <Compile Include="RequestyApplied.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharedUtils\SharedUtils.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Ref\" />
   </ItemGroup>
   <Import Project="..\..\..\.paket\Paket.Restore.targets" />
 </Project>

@@ -37,6 +37,7 @@ module Types =
         static member StringifyError x =
             x
             |> function
+            | AggregateError x -> x |> StandardErrors.StringifyErrors |> JoinPeriodSpace <-< "Aggregate Error"
             | KeyValueNotFound x -> "Key Value Not Found" >-> x |> str
             | UnexepectedNullValue x -> "UnexepectedNullValue" >-> x
             | AnUnexpectedErrorOccurredDetailed (msg, ex) -> ex |> TheNewBestExceptionToStringFull <-< msg

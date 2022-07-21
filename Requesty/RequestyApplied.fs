@@ -5,30 +5,30 @@ open FSharp.Data
 open FSharp.Data.HttpRequestHeaders
 
 module RequestyApplied = 
-    
+    ()
     //let resp  = eval {HttpResponse.Body = Text ""; HttpResponse.StatusCode = 200; HttpResponse.Headers = Map.empty; HttpResponse.Cookies = Map.empty; ResponseUrl = ""}
     //let resp : Result<MyResultCode, string> = eval {HttpResponse.Body = Text ""; HttpResponse.StatusCode = 200; HttpResponse.Headers = Map.empty; HttpResponse.Cookies = Map.empty; ResponseUrl = ""}
-    let newCall = 
-        HRB.Create<MyResultCode>()
-        |> (fun x -> x)
-        |> HRB.Url @"www."
-        |> HRB.EvaluteResponse BasicResponse
-        |> HRB.Run
-        |> fun x -> x
-        |> function
-        | Ok x -> 
-            x
-            |> function
-            | GotData x -> ()
-            | GotBinary x -> ()
-            | Failed x -> ()
-        | Error str -> ()
+    //let newCall = 
+    //    HRB.Create<MyResultCode>()
+    //    |> (fun x -> x)
+    //    |> HRB.Url @"www."
+    //    |> HRB.EvaluteResponse BasicResponse
+    //    |> HRB.Run
+    //    |> fun x -> x
+    //    |> function
+    //    | Ok x -> 
+    //        x
+    //        |> function
+    //        | GotData x -> ()
+    //        | GotBinary x -> ()
+    //        | Failed x -> ()
+    //    | Error str -> ()
             
-        let myCreate = HRB.Create<MyResultCode>
+    //    let myCreate = HRB.Create<MyResultCode>
 
-        myCreate()
-        |> HRB.Run
-        |> (fun x -> x)
+    //    myCreate()
+    //    |> HRB.Run
+    //    |> (fun x -> x)
 
     //let MakeCall verb url fn msg =
     //    HRB.Url url
