@@ -5,6 +5,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Ref\Operators.fs" />
+    <Compile Include="Ref\Atomic.fs" />
+    <Compile Include="Types.fs" />
     <Compile Include="Requesty.fs" />
     <Compile Include="RequestyApplied.fs" />
     <None Include="paket.references" />

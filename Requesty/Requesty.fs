@@ -52,16 +52,13 @@ module Requesty =
 
     type HttpRequestBuilder = 
         {
-            Url: string
-            Query: (string * string) list
-            Headers: (string * string) list
-            Body: string
-            ExpectsBody: bool
-            Method: string
-            //BAUsername: string
-            //BAPassword: string
-            AuthInfo: AuthInfo
-            //EvaluteResponse: (HttpResponse -> Result<obj, string>) option
+            Url         : string
+            Query       : (string * string) list
+            Headers     : (string * string) list
+            Body        : string
+            ExpectsBody : bool
+            Method      : string
+            AuthInfo    : AuthInfo
         }
         static member Empty() = { ExpectsBody = false; Method="get"; Url = ""; Query = []; Headers = []; Body = ""; AuthInfo = Anon }
     let BasicResponse = 
@@ -71,26 +68,55 @@ module Requesty =
             | 200, Binary x -> Error $"Binary code"
             | _ -> Error $"Bad code {x}"
         )
+    type TypeName = TypeName of string
+    type JsonText = JsonText of string
+
+    type DeserializationError =
+        | FailedToParse of (TypeName * JsonText)
+        | TextWasEmpty
 
     type HRB2 =
         static member Create () = HttpRequestBuilder.Empty()
-        static member Url x b = {b with HttpRequestBuilder.Url = x}
-        static member Query x b = {b with HttpRequestBuilder.Query = x}
-        static member Headers x b = {b with HttpRequestBuilder.Headers = x}
-        static member Body x b = {b with HttpRequestBuilder.Body = x}
+        static member Url x b         = {b with HttpRequestBuilder.Url = x}
+        static member Query x b       = {b with HttpRequestBuilder.Query = x}
+        static member Headers x b     = {b with HttpRequestBuilder.Headers = x}
+        static member Body x b        = {b with HttpRequestBuilder.Body = x}
         static member ExpectsBody x b = {b with HttpRequestBuilder.ExpectsBody = x}
-        static member Method x b = {b with HttpRequestBuilder.Method = x}
-        static member Auth x b = {b with HttpRequestBuilder.AuthInfo = x }
+        static member Method x b      = {b with HttpRequestBuilder.Method = x}
+        static member Auth x b        = {b with HttpRequestBuilder.AuthInfo = x }
         static member BasicAuth name password b = {b with HttpRequestBuilder.AuthInfo = BasicAuth(name, password)}
         static member SetMethodPost b = {b with Method = "post"}
         static member Run (eval: (HttpResponse -> Result<'a, 'err>)) (x: HttpRequestBuilder) : Result<'a, 'err> = 
             Http.Request (url = x.Url, query = x.Query, headers = x.Headers, httpMethod = x.Method) 
             |> eval 
         static member RunWithBasicResponse (x: HttpRequestBuilder) : Result<MyResultCode, string> = HRB2.Run BasicResponse x
+        static member RunWithBasicJsonResponse (x: HttpRequestBuilder) : Result<'result, DeserializationError> = 
+            HRB2.Run BasicResponse x
+            |> function
+            | Ok (GotData json) when json.Trim().Length = 0 -> TextWasEmpty |> Error
+            | Ok (GotData json) ->
+                try
+                    Newtonsoft.Json.JsonConvert.DeserializeObject<'result> json |> Ok
+                with ex -> 
+                    $"Failed to deserialize to type {typeof<'result>.Name} {json}" |> Error
+            | _ -> "" |> Error
     
+    type SampleRecord =
+        {
+            Card: string
+            Size: int
+        }
+
     HRB2.Create()
     |> HRB2.Url ""
-    |> fun x -> x
+    |> fun x -> 
+        x
+        |> HRB2.RunWithBasicJsonResponse<SampleRecord>
+        |> function
+        | Ok (x: SampleRecord) -> ()
+        | Error x -> ()
+
+        x
     |> fun x -> 
         x |> (HRB2.RunWithBasicResponse >> function Ok x -> () | Error x -> ())
         x
