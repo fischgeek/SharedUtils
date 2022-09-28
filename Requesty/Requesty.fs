@@ -109,7 +109,7 @@ module Requesty =
                     Newtonsoft.Json.JsonConvert.DeserializeObject<'dataStructure> json |> Ok
                 with ex -> 
                     $"Failed to deserialize to type {typeof<'dataStructure>.Name} {json}" |> DeserializationError.GenericError |> Error
-            | x -> $"Who knows: {x}" |> GenericError |> Error
+            | Error someError -> $"Who knows: {someError}" |> GenericError |> Error
     
     and Auth() =
         member _.Basic name password b = {b with HttpRequestBuilder.AuthInfo = BasicAuth(name, password)}
