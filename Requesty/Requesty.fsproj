@@ -5,20 +5,21 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Remove="Ref\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".refs" />
+    <None Include="paket.references" />
     <Compile Include="Requesty.fs" />
     <Compile Include="RequestyApplied.fs" />
-    <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharedUtils\SharedUtils.fsproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Ref\" />
-  </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <ItemGroup>
       <FSharpCoreResourcesFiles Include="$(OutputPath)**\FSharp.Core.resources.dll" />
-      <FSharpCoreResourcesDirs Include="@(FSharpCoreResourcesFiles-&gt;'\%(Directory)') " />
+      <FSharpCoreResourcesDirs Include="@(FSharpCoreResourcesFiles->'\%(Directory)') " />
     </ItemGroup>
     <RemoveDir Directories="@(FSharpCoreResourcesDirs)" />
   </Target>
