@@ -1,4 +1,4 @@
-﻿namespace Requesty
+namespace Requesty
 module Types =
 
     type StandardErrors =

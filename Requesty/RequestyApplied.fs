@@ -1,4 +1,4 @@
-﻿namespace Requesty
+namespace Requesty
 
 open FSharp
 open FSharp.Data
@@ -173,4 +173,3 @@ module RequestyApplied =
     //let PutJsonWithBA fn msg username password body url = MakeCallWithBodyBA HttpPutJsonWithBasicAuth url body fn msg username password
     //let Del fn msg url = MakeCall HttpDel url fn msg
     //let Pos fn msg url = MakeCall HttpPost url fn msg
-

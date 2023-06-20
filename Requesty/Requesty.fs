@@ -134,8 +134,8 @@ module Requesty =
                 try
                     Newtonsoft.Json.JsonConvert.DeserializeObject<'dataStructure> json |> Ok
                 with ex -> 
-                    $"Error. {ex.Message}. Failed to deserialize to type {typeof<'dataStructure>.Name} {json}" |> DeserializationError.GenericError |> Error
-            | x -> $"Who knows: {x}" |> GenericError |> Error
+                    $"Failed to deserialize to type {typeof<'dataStructure>.Name} {json}" |> DeserializationError.GenericError |> Error
+            | Error someError -> $"Who knows: {someError}" |> GenericError |> Error
     
     and Auth() =
         member _.Basic name password b = {b with HttpRequestBuilder.AuthInfo = BasicAuth(name, password)}

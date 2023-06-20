@@ -1,4 +1,4 @@
-﻿namespace SharedUtils
+namespace SharedUtils
 
 module Say =
     let hello name =
