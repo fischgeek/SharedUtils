@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
@@ -10,10 +10,11 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharedUtils\SharedUtils.fsproj" />
+    <Folder Include="Ref\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Ref\" />
+    <ProjectReference Include="..\..\..\westerncap\SharedFSharpVanilla\SharedFSharpVanilla.fsproj" />
+    <ProjectReference Include="..\SharedUtils\SharedUtils.fsproj" />
   </ItemGroup>
   <Import Project="..\..\..\.paket\Paket.Restore.targets" />
 </Project>

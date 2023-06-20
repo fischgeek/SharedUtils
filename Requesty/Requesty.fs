@@ -2,8 +2,10 @@
 
 open FSharp.Data
 open FSharp.Data.HttpRequestHeaders
+open System.Text
 
 [<AutoOpen>]
+
 module Requesty =
     type JsonString = JsonString of string
     
@@ -54,15 +56,30 @@ module Requesty =
         | FailedToParse of (TypeName * JsonText)
         | TextWasEmpty
         | GenericError of string
+        static member Stringfiy = 
+            function
+            | FailedToParse (TypeName x,JsonText y) -> $"Failed to parse data %s{x}\n\n%s{y}"
+            | TextWasEmpty -> "Text was empty"
+            | GenericError x -> $"Generic Error %s{x}"
 
     let private PrepRequest (x: HttpRequestBuilder) =
+        // [ ContentType HttpContentTypes.Json; BasicAuth x.BAUsername x.BAPassword ]
         let x = 
             match x.AuthInfo with
-            | AuthInfo.BasicAuth (Username u, Password p) -> {x with Headers = x.Headers @ ["username", u; "password", p]}
+            | AuthInfo.BasicAuth (Username u, Password p) -> {x with Headers = x.Headers @ [FSharp.Data.HttpRequestHeaders.BasicAuth u p]}
+            | AuthInfo.Bearer (tok: BearerInfo) -> 
+                let xx = tok |> function BearerInfo x -> x
+                {x with Headers = x.Headers @ [("Authorization", $"Bearer %s{xx}")]}
             | _ -> x
         x
+
+    let getLength (b: string) = 
+        let encoding = new ASCIIEncoding()
+        encoding.GetBytes(b).Length.ToString()
+
     type HRB =
         static member Create () = HttpRequestBuilder.Empty()
+        static member CreateJsonRequest = HttpRequestBuilder.Empty >> HRB.SetContentTypeJson
         
         //static member FormattedURL (url: string) (pathPart: string) (params: string list) =
         //    params
@@ -78,16 +95,25 @@ module Requesty =
         //    $"{url}//1{url}" // https://api.trello.com/1?name=newname&desc=newdesc&pos=2
         //    |> HRB.Url
 
+
         static member Url x b         = {b with HttpRequestBuilder.Url = x}
         static member Query x b       = {b with HttpRequestBuilder.Query = x}
         static member Headers x b     = {b with HttpRequestBuilder.Headers = x}
         static member Body x b        = {b with HttpRequestBuilder.Body = x}
+        static member AddHeader key value b = {b with HttpRequestBuilder.Headers = (key, value) :: b.Headers }
         static member ExpectsBody x b = {b with HttpRequestBuilder.ExpectsBody = x}
+        static member SetContentTypeJson b = b |> HRB.AddHeader "Content-Type" "application/json"
         static member Method x b      = {b with HttpRequestBuilder.Method = x}
         static member SetMethodPost b = {b with Method = "post"}
+        static member SetContentLength b = b |> HRB.AddHeader "Content-Length" (b.Body |> getLength)
         static member Run (interpreter: (HttpResponse -> Result<'a, 'err>)) (x: HttpRequestBuilder) : Result<'a, 'err> = 
             let x = PrepRequest x
-            Http.Request (url = x.Url, query = x.Query, headers = x.Headers, httpMethod = x.Method) 
+            try 
+                if x.Method = "post" || x.Method = "put" then
+                    Http.Request (url = x.Url, query = x.Query, headers = x.Headers, body = HttpRequestBody.TextRequest x.Body, httpMethod = x.Method) 
+                else
+                    Http.Request (url = x.Url, query = x.Query, headers = x.Headers, httpMethod = x.Method)
+            with ex -> failwith ex.Message
             |> interpreter 
         static member StockFns = new StockFns()       
         static member StockInterpreters = new StockInterpreters()
@@ -108,11 +134,12 @@ module Requesty =
                 try
                     Newtonsoft.Json.JsonConvert.DeserializeObject<'dataStructure> json |> Ok
                 with ex -> 
-                    $"Failed to deserialize to type {typeof<'dataStructure>.Name} {json}" |> DeserializationError.GenericError |> Error
+                    $"Error. {ex.Message}. Failed to deserialize to type {typeof<'dataStructure>.Name} {json}" |> DeserializationError.GenericError |> Error
             | x -> $"Who knows: {x}" |> GenericError |> Error
     
     and Auth() =
         member _.Basic name password b = {b with HttpRequestBuilder.AuthInfo = BasicAuth(name, password)}
+        member _.Bearer tok b = {b with HttpRequestBuilder.AuthInfo = Bearer(tok)}
 
     and StockFns() =
         member _.RunWithTextResponse (x: HttpRequestBuilder) : Result<string, string> = HRB.Run HRB.StockInterpreters.TextInterpreter x
