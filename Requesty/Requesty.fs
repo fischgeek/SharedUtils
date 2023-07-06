@@ -61,6 +61,18 @@ module Requesty =
             | FailedToParse (TypeName x,JsonText y) -> $"Failed to parse data %s{x}\n\n%s{y}"
             | TextWasEmpty -> "Text was empty"
             | GenericError x -> $"Generic Error %s{x}"
+    
+    type HRBError =
+        | SomeDeserializationError of DeserializationError
+        | SomePossibleWebCallErrors of PossibleWebCallErrors
+        | SomeHttpResponseErrors of HttpResponseErrors
+        | Other of string
+        static member Stringify =
+            function
+            | SomeDeserializationError x -> DeserializationError.Stringfiy x
+            | SomePossibleWebCallErrors x -> PossibleWebCallErrors.Stringify x
+            | SomeHttpResponseErrors x -> HttpResponseErrors.Stringify x
+            | Other x -> x
 
     let private PrepRequest (x: HttpRequestBuilder) =
         // [ ContentType HttpContentTypes.Json; BasicAuth x.BAUsername x.BAPassword ]
@@ -106,46 +118,52 @@ module Requesty =
         static member Method x b      = {b with HttpRequestBuilder.Method = x}
         static member SetMethodPost b = {b with Method = "post"}
         static member SetContentLength b = b |> HRB.AddHeader "Content-Length" (b.Body |> getLength)
-        static member Run (interpreter: (HttpResponse -> Result<'a, 'err>)) (x: HttpRequestBuilder) : Result<'a, 'err> = 
+        static member Run (interpreter: (HttpResponse -> Result<'a, HRBError>)) (x: HttpRequestBuilder) : Result<'a, HRBError> = 
             let x = PrepRequest x
             try 
                 if x.Method = "post" || x.Method = "put" then
                     Http.Request (url = x.Url, query = x.Query, headers = x.Headers, body = HttpRequestBody.TextRequest x.Body, httpMethod = x.Method) 
                 else
                     Http.Request (url = x.Url, query = x.Query, headers = x.Headers, httpMethod = x.Method)
-            with ex -> failwith ex.Message
-            |> interpreter 
+                |> Ok
+            with ex -> ex.Message |> Other |> Error
+            |> Result.bind interpreter 
         static member StockFns = new StockFns()       
         static member StockInterpreters = new StockInterpreters()
         static member Auth = new Auth()
     
     and StockInterpreters() =
         member _.TextInterpreter (x: HttpResponse) =
-                match x.StatusCode, x.Body with
-                | 200, Text x -> x |> Ok
-                | 200, Binary x -> Error $"Binary code"
-                | _ -> Error $"Bad code {x}"
+            match x.StatusCode, x.Body with
+            | 200, Text x -> x |> Ok
+            | 200, Binary x -> $"Binary code" |> HRBError.Other |> Error
+            | 429, Text x -> "Rate limit" |> HRBError.Other |> Error
+            | _ -> $"Bad code %i{x.StatusCode}" |> HRBError.Other |> Error
         
-        member _.JSONInerpreter<'dataStructure> (x: Result<string, string>) : Result<'dataStructure, DeserializationError> =
+        member _.JSONInerpreter<'dataStructure> (x: Result<string, HRBError>) : Result<'dataStructure, HRBError> =
             x
             |> function
-            | Ok json when json.Trim().Length = 0 -> TextWasEmpty |> Error
+            | Ok json when json.Trim().Length = 0 -> TextWasEmpty |> SomeDeserializationError |> Error
             | Ok json ->
                 try
                     Newtonsoft.Json.JsonConvert.DeserializeObject<'dataStructure> json |> Ok
                 with ex -> 
-                    $"Failed to deserialize to type {typeof<'dataStructure>.Name} {json}" |> DeserializationError.GenericError |> Error
-            | Error someError -> $"Who knows: {someError}" |> GenericError |> Error
+                    $"Failed to deserialize to type %s{typeof<'dataStructure>.Name} %s{json}" 
+                    |> DeserializationError.GenericError 
+                    |> HRBError.SomeDeserializationError
+                    |> Error
+            | Error someError -> $"Who knows: {someError}" |> GenericError |> SomeDeserializationError |> Error
     
     and Auth() =
         member _.Basic name password b = {b with HttpRequestBuilder.AuthInfo = BasicAuth(name, password)}
         member _.Bearer tok b = {b with HttpRequestBuilder.AuthInfo = Bearer(tok)}
 
     and StockFns() =
-        member _.RunWithTextResponse (x: HttpRequestBuilder) : Result<string, string> = HRB.Run HRB.StockInterpreters.TextInterpreter x
+        member _.RunWithTextResponse (x: HttpRequestBuilder) : Result<string, HRBError> = HRB.Run HRB.StockInterpreters.TextInterpreter x
        
-        member _.RunWithBasicJsonResponse (x: HttpRequestBuilder) : Result<'dataStructure, DeserializationError> = 
+        member _.RunWithBasicJsonResponse (x: HttpRequestBuilder) : Result<'dataStructure, HRBError> = 
             HRB.Run HRB.StockInterpreters.TextInterpreter x
+            |> (fun x -> x)
             |> HRB.StockInterpreters.JSONInerpreter<'dataStructure>
     
     type SampleRecord =
@@ -162,8 +180,9 @@ module Requesty =
         |> HRB.StockFns.RunWithBasicJsonResponse<SampleRecord>
         |> function
         | Ok (x: SampleRecord) -> ()
-        | Error x -> ()
-
+        | Error x -> 
+            //x |> HRBError.Stringify |> out
+            ()
         x
     |> fun x -> 
         x |> (HRB.StockFns.RunWithTextResponse >> function Ok x -> () | Error x -> ())
