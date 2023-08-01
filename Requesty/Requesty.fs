@@ -1,4 +1,4 @@
-﻿namespace Requesty
+namespace Requesty
 
 open FSharp.Data
 open FSharp.Data.HttpRequestHeaders
