@@ -3,6 +3,8 @@
 open FSharp.Data
 open FSharp.Data.HttpRequestHeaders
 open System.Text
+open FSharp.Data.HtmlNode
+open SharedUtils.Pipes
 
 [<AutoOpen>]
 
@@ -30,6 +32,7 @@ module Requesty =
     type BearerInfo = BearerInfo of string
     type AuthInfo =
         | BasicAuth of UserName * Password
+        | Base64Auth of UserName * Password
         | Bearer of BearerInfo
         | Anon
     
@@ -136,6 +139,7 @@ module Requesty =
         member _.TextInterpreter (x: HttpResponse) =
             match x.StatusCode, x.Body with
             | 200, Text x -> x |> Ok
+            | 201, Text x -> x |> Ok
             | 200, Binary x -> $"Binary code" |> HRBError.Other |> Error
             | 429, Text x -> "Rate limit" |> HRBError.Other |> Error
             | _ -> $"Bad code %i{x.StatusCode}" |> HRBError.Other |> Error
@@ -156,7 +160,12 @@ module Requesty =
     
     and Auth() =
         member _.Basic name password b = {b with HttpRequestBuilder.AuthInfo = BasicAuth(name, password)}
+        member _.Base64Auth name password b = 
+            // unfinished
+            let s = $"{name}:{Password}"
+            {b with HttpRequestBuilder.AuthInfo = Base64Auth(name, password)}
         member _.Bearer tok b = {b with HttpRequestBuilder.AuthInfo = Bearer(tok)}
+        
 
     and StockFns() =
         member _.RunWithTextResponse (x: HttpRequestBuilder) : Result<string, HRBError> = HRB.Run HRB.StockInterpreters.TextInterpreter x
