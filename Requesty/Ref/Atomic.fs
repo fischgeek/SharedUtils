@@ -397,7 +397,7 @@ module Atomic =
             rb
             |> RX.Matches
             |+ fun x ->
-                
+
                 names
                 |+ fun q -> q, x.Groups.[q].Value
                 |> dict

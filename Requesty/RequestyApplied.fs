@@ -4,11 +4,11 @@ open FSharp
 open FSharp.Data
 //open FSharp.Data.HttpRequestHeaders
 
-module RequestyApplied = 
+module RequestyApplied =
     ()
     //let resp  = eval {HttpResponse.Body = Text ""; HttpResponse.StatusCode = 200; HttpResponse.Headers = Map.empty; HttpResponse.Cookies = Map.empty; ResponseUrl = ""}
     //let resp : Result<MyResultCode, string> = eval {HttpResponse.Body = Text ""; HttpResponse.StatusCode = 200; HttpResponse.Headers = Map.empty; HttpResponse.Cookies = Map.empty; ResponseUrl = ""}
-    //let newCall = 
+    //let newCall =
     //    HRB.Create<MyResultCode>()
     //    |> (fun x -> x)
     //    |> HRB.Url @"www."
@@ -16,14 +16,14 @@ module RequestyApplied =
     //    |> HRB.Run
     //    |> fun x -> x
     //    |> function
-    //    | Ok x -> 
+    //    | Ok x ->
     //        x
     //        |> function
     //        | GotData x -> ()
     //        | GotBinary x -> ()
     //        | Failed x -> ()
     //    | Error str -> ()
-            
+
     //    let myCreate = HRB.Create<MyResultCode>
 
     //    myCreate()
@@ -37,8 +37,8 @@ module RequestyApplied =
     //    |> function
     //    | Success x -> fn x
     //    | _ -> failwith msg
-    
-    //let MakeCallWithBody verb url (body:string) fn msg = 
+
+    //let MakeCallWithBody verb url (body:string) fn msg =
     //    HRB.Url url
     //    |> HRB.Body body
     //    |> verb
@@ -46,7 +46,7 @@ module RequestyApplied =
     //    | Success x -> fn x
     //    | _ -> failwith msg
 
-    //let MakeCallWithBodyBA verb url (body:string) fn msg username password = 
+    //let MakeCallWithBodyBA verb url (body:string) fn msg username password =
     //    HRB.Url url
     //    |> HRB.BAUsername username
     //    |> HRB.BAPassword password
@@ -57,8 +57,8 @@ module RequestyApplied =
     //    | _ -> failwith msg
 
     //type BuilderToStatusToResult = (HttpRequestBuilder -> Result<JsonString,HttpResponseErrors>)
-    
-    //let MakeCallWithBodyBA_Result verb url (body:string) username password : Result<JsonString,PossibleWebCallErrors> = 
+
+    //let MakeCallWithBodyBA_Result verb url (body:string) username password : Result<JsonString,PossibleWebCallErrors> =
     //    HRB.Url url
     //    |> HRB.BAUsername username
     //    |> HRB.BAPassword password
@@ -70,7 +70,7 @@ module RequestyApplied =
     //    //| Ok x -> x |> Ok
     //    //| Error x -> x |> HttpResponseErrors |> Error
 
-    //let MakeCallWithBA verb url fn msg username password = 
+    //let MakeCallWithBA verb url fn msg username password =
     //    HRB.Url url
     //    |> HRB.BAUsername username
     //    |> HRB.BAPassword password
@@ -79,7 +79,7 @@ module RequestyApplied =
     //    | Success x -> fn x
     //    | _ -> failwith msg
 
-    //let MakeCallWithBA_Result verb url msg username password = 
+    //let MakeCallWithBA_Result verb url msg username password =
     //    HRB.Url url
     //    |> HRB.BAUsername username
     //    |> HRB.BAPassword password
@@ -88,7 +88,7 @@ module RequestyApplied =
     //    | Success x -> x |> Ok
     //    | _ -> FailedForSomeReason msg |> Error
 
-    //let MakeCallWithBearerToken verb url (token: string) msg = 
+    //let MakeCallWithBearerToken verb url (token: string) msg =
     //    HRB.Url url
     //    |> HRB.Headers [("Authorization",$"Bearer {token}")]
     //    |> verb
@@ -113,9 +113,9 @@ module RequestyApplied =
     //        match res.Body with
     //        | Text txt -> JsonString txt |> Ok
     //        | _ -> HttpResponseErrors.Nothing |> Error
-    
+
     //let adapt (fn: HttpRequestBuilder -> HttpResponse) : (HttpRequestBuilder -> Result<JsonString, PossibleWebCallErrors>) =
-    //    fun hrb -> 
+    //    fun hrb ->
     //        try
     //            fn hrb
     //            |> returnResponse2
@@ -127,40 +127,40 @@ module RequestyApplied =
 
 
     //// legacy
-    
-    //let HttpGet (x:HttpRequestBuilder) = 
+
+    //let HttpGet (x:HttpRequestBuilder) =
     //    Http.Request(url = x.Url, query = x.Query, headers = x.Headers, httpMethod = "get") |> returnResponse
-    
-    //let HttpPut (x:HttpRequestBuilder) = 
+
+    //let HttpPut (x:HttpRequestBuilder) =
     //    Http.Request(url = x.Url, query = x.Query, headers = x.Headers, httpMethod = "put") |> returnResponse
-    
-    //let HttpDel (x:HttpRequestBuilder) = 
+
+    //let HttpDel (x:HttpRequestBuilder) =
     //    Http.Request(url = x.Url, query = x.Query, headers = x.Headers, httpMethod = "delete") |> returnResponse
-    
+
     //let HttpPost (x:HttpRequestBuilder) =
     //    Http.Request (url = x.Url, query = x.Query, headers = x.Headers, httpMethod = "post") |> returnResponse
 
     //let HttpPostJson (x:HttpRequestBuilder) =
     //    Http.Request (url = x.Url, query = x.Query, headers = [ ContentType HttpContentTypes.Json ], httpMethod = "post", body = (x.Body |> TextRequest)) |> returnResponse
 
-    //let HttpPostJsonWithBasicAuth (x:HttpRequestBuilder) = 
+    //let HttpPostJsonWithBasicAuth (x:HttpRequestBuilder) =
     //    Http.Request(url = x.Url, query = x.Query, headers = [ ContentType HttpContentTypes.Json; BasicAuth x.BAUsername x.BAPassword ], httpMethod = "post", body = (x.Body |> TextRequest)) |> returnResponse
 
 
     //let HttpPost2 (x:HttpRequestBuilder) =
     //    Http.Request (url = x.Url, query = x.Query, headers = [ ContentType HttpContentTypes.Text ], httpMethod = "post", body = (x.Body |> TextRequest)) |> returnResponse
 
-    //let HttpPutJson (x:HttpRequestBuilder) = 
+    //let HttpPutJson (x:HttpRequestBuilder) =
     //    Http.Request(url = x.Url, query = x.Query, headers = [ ContentType HttpContentTypes.Json ], httpMethod = "put", body = (x.Body |> TextRequest)) |> returnResponse
 
-    //let HttpPutJsonWithBasicAuth (x:HttpRequestBuilder) = 
+    //let HttpPutJsonWithBasicAuth (x:HttpRequestBuilder) =
     //    Http.Request(url = x.Url, query = x.Query, headers = [ ContentType HttpContentTypes.Json; BasicAuth x.BAUsername x.BAPassword ], httpMethod = "put", body = (x.Body |> TextRequest)) |> returnResponse
 
     //let HttpGetWithBasicAuth (x:HttpRequestBuilder) =
     //    Http.Request(url = x.Url, query = x.Query, headers = [ ContentType HttpContentTypes.Json; BasicAuth x.BAUsername x.BAPassword ], httpMethod = "get") |> returnResponse
 
     //let Get fn msg url = MakeCall HttpGet url fn msg
-    //let GetWithBA fn msg username password url = 
+    //let GetWithBA fn msg username password url =
     //    HRB.Url url
     //    |> HRB.BAUsername username
     //    |> HRB.BAPassword password
