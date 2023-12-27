@@ -1,0 +1,4 @@
+group Current
+FSharp.Core
+FSharp.Data
+Newtonsoft.Json

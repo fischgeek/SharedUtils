@@ -23,7 +23,7 @@
     <RemoveDir Directories="@(FSharpCoreResourcesDirs)" />
   </Target>
   <ItemGroup>
-    <ProjectReference Include="..\SharedUtils\SharedUtils.fsproj" />
+    <ProjectReference Include="C:\Dev\PublicRepos\SharedUtils\SharedUtils\SharedUtils.fsproj" />
   </ItemGroup>
   <Import Project="..\..\..\.paket\Paket.Restore.targets" />
 </Project>

@@ -1,0 +1,4 @@
+group Net8
+FSharp.Core
+FSharp.Data
+Newtonsoft.Json
