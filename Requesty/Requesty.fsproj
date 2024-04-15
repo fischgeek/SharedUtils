@@ -5,9 +5,11 @@
     <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
     <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Ref\**" />
+    <Content Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".refs" />
