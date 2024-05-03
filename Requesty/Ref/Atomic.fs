@@ -336,7 +336,7 @@ module Atomic =
             File.WriteAllText(@"c:\temp\regexpad.pattern.txt", rb.Pattern |> ns)
             File.WriteAllText(@"c:\temp\regexpad.replacement.txt", rb.Replacement |> ns)
             File.WriteAllText(@"c:\temp\regexpad.options.txt", rb.RegexOptions |> int |> str)
-            Process.Start(@"C:\DEV\Releases\RegexPad\RegexPad.exe", "import")
+            Process.Start(@"C:\Dev\Releases\RegexPadCurrent\Stable\RegexPad.exe", "import")
 
         static member RegexPadWait (rb: RegexBuilder) : unit = (RX.RegexPadFull rb).WaitForExit()
 
