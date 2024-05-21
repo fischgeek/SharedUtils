@@ -1,10 +1,7 @@
 namespace Requesty
 
 open FSharp.Data
-open FSharp.Data.HttpRequestHeaders
 open System.Text
-open FSharp.Data.HtmlNode
-open SharedUtils.Pipes
 
 [<AutoOpen>]
 
