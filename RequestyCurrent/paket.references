@@ -1,4 +1,5 @@
 group Current
 FSharp.Core
 FSharp.Data
+FSharp.Data.Xml.Core
 Newtonsoft.Json
