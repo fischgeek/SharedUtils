@@ -41,7 +41,6 @@
   </Target>
   <!-- Op: End -->
   <ItemGroup>
-    <None Include=".refs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
