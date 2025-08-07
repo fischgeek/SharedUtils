@@ -49,7 +49,7 @@
     <Compile Include="..\Requesty\RequestyApplied.fs" Link="RequestyApplied.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Y:\Dev\PublicRepos\SharedUtils\SharedUtils8\SharedUtils8.fsproj" />
+    <ProjectReference Include="..\SharedUtils8\SharedUtils8.fsproj" />
   </ItemGroup>
   <Import Project="..\..\..\.paket\Paket.Restore.targets" />
 </Project>
